@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 const Contact = () => {
 
-    const [planets, setPlanets] = useState(['wait...'])
+    const [planets, setPlanets] = useState<string[] | null>(null);
 
 
     useEffect(() => {
@@ -11,10 +11,10 @@ const Contact = () => {
         const days = 30 * 24 * 60 * 60 * 1000
 
         if (localData) {
-            const storeDate = JSON.parse(localData)
+            const storeDate = JSON.parse(localData);
             if (time - storeDate.timestamp < days) {
-                setPlanets(storeDate.planets)
-                return
+                setPlanets(storeDate.payload);
+                return;
             }
         }
 
@@ -22,9 +22,9 @@ const Contact = () => {
                 const res = await fetch(`https://sw-info-api.herokuapp.com/v1/planets`)
                 const data:Array<{name:string}> = await res.json()
                 const planets = data.map(item => item.name);
-                setPlanets(planets)
+            setPlanets(planets);
                 localStorage.setItem('planets', JSON.stringify({
-                    payload: planets,
+                        payload: planets,
                     timestamp: Date.now()
                 }))
         }

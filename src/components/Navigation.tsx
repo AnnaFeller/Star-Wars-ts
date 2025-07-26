@@ -3,6 +3,7 @@ import {navItems} from "../utils/constant.ts";
 
 const Navigation = () => {
     return (
+
         <nav>
             <ul className="fixed top-1 left-12 flex gap-1">
                 {/*gap=отступ*/}

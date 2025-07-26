@@ -1,4 +1,4 @@
 export interface StarContextValue{
     page:string,
-    cahangePage:(page:string)=>void
+    changePage:(page:string)=>void
 }

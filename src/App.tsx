@@ -1,26 +1,21 @@
-
 import './App.css'
-
-import {useState} from "react";
-import {StarContext} from "./utils/context";
 import Header from "./components/Header.tsx";
 import Main from "./components/Main.tsx";
 import Footer from "./components/Footer.tsx";
+import {useState} from "react";
 import {navItems} from "./utils/constant.ts";
-
+import {StarContext} from "./utils/context.ts";
 
 function App() {
-    const [page , setPage] = useState(navItems[0]);
+    const [page, setPage] = useState(navItems[0]);
 
     return (
-
         <div>
-            <StarContext value={{page:page,changePage:setPage}}>
-                <Header />
-                <Main />
+            <StarContext value={{ page,  changePage: setPage }}>
+                <Header/>
+                <Main/>
                 <Footer/>
             </StarContext>
-
         </div>
 
     )

@@ -1,64 +1,69 @@
+
 import {useEffect, useState} from "react";
 
+interface HeroInfo{
+    name: string;
+    gender: string;
+    birth_year: string;
+    height: string;
+    mass: string;
+    hair_color: string;
+    skin_color: string;
+    eye_color: string;
+}
+
+const period_month = 30 * 24 * 60 * 60 * 1000;
+const id = 1;
 
 const AboutMe = () => {
-    const [loading, setLoading] = useState(true);
-    const [heroName, setHeroName] = useState(null)
+    const [hero, setHero] = useState<HeroInfo | null>(null);
 
     useEffect(() => {
-        const localData = localStorage.getItem("heroName");
-        const time = Date.now()
-        const days = 30*24*60*60*1000
-
-        if (localData) {
-            const storeDate  = JSON.parse(localData)
-            if(time - storeDate.timestamp < days){
-                setHeroName(storeDate.heroName)
-                setLoading(false);
-                return
+        const storedHero = localStorage.getItem("hero");
+        if (storedHero) {
+            const heroData = JSON.parse(storedHero);
+            if ((Date.now() - heroData.timestamp) < period_month) {
+                setHero(heroData.payload);
+                return;
             }
         }
+        fetch(`https://sw-info-api.herokuapp.com/v1/peoples/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const info: HeroInfo = {
+                    name: data.name,
+                    gender: data.gender,
+                    birth_year: data.birth_year,
+                    height: data.height,
+                    mass: data.mass,
+                    hair_color: data.hair_color,
+                    skin_color: data.skin_color,
+                    eye_color: data.eye_color,
+                };
+                setHero(info);
+                localStorage.setItem(
+                    "hero",
+                    JSON.stringify({
+                        payload: info,
+                        timestamp: Date.now(),
+                    })
+                );
+            });
+    }, []);
 
-        async function getHero() {
-            try {
-                const id = Math.floor(Math.random() * 10) + 1;
-                const res = await fetch(`https://sw-info-api.herokuapp.com/v1/peoples/${id}`);
-                const data = await res.json();
-                setHeroName(data);
-                localStorage.setItem("heroName", JSON.stringify({
-                    heroName: data,
-                    timestamp: Date.now()
-                }));
-                setLoading(false);
-            } catch (err) {
-                console.error('ERROR', err);
-                setLoading(false);
-            }
-        }
-        getHero()
-
-    },[]);
-
-
-
-    if(loading || !heroName) {
-        return <div>
-            <span className="spinner-border spinner-border-sm"></span>
-            Loading..
-        </div>;
-    }
 
     return (
-        <div className="hero">
-            <h2>{heroName.name}</h2>
-            <p><strong>Height:</strong> {heroName.height}</p>
-            <p><strong>Mass:</strong> {heroName.mass}</p>
-            <p><strong>Hair Color:</strong> {heroName.hair_color}</p>
-            <p><strong>Skin Color:</strong> {heroName.skin_color}</p>
-            <p><strong>Eye Color:</strong> {heroName.eye_color}</p>
-            <p><strong>Birth Year:</strong> {heroName.birth_year}</p>
-            <p><strong>Gender:</strong> {heroName.gender}</p>
-        </div>
+        <>
+            {hero && (
+                <div className="text-[2em] text-justify tracking-widest leading-14 ml-8">
+                    {Object.keys(hero).map(key => (
+                        <p key={key}>
+                            <span className="text-3xl capitalize">{key.replace('_', ' ')}</span>: {hero[key as keyof HeroInfo]}
+                        </p>
+                    ))}
+                </div>
+            )}
+        </>
     );
 };
 
