@@ -1,7 +1,7 @@
-
 import {useEffect, useState} from "react";
+import {useParams} from "react-router";
 
-interface HeroInfo{
+interface HeroInfo {
     name: string;
     gender: string;
     birth_year: string;
@@ -11,15 +11,33 @@ interface HeroInfo{
     skin_color: string;
     eye_color: string;
 }
+const characters: Record<string, string> = {
+    luke: "1",
+    c3po: "2",
+    r2d2: "3",
+    leia: "5",
+    obi_wan: "10",
+    chewbacca: "13",
+    han_solo: "14",
+    yoda: "0",
+    ewok: "30",
+};
+
 
 const period_month = 30 * 24 * 60 * 60 * 1000;
-const id = 1;
 
 const AboutMe = () => {
     const [hero, setHero] = useState<HeroInfo | null>(null);
+    const {heroId} = useParams();
+
+
+//имя + id
+    const name =(heroId && characters[heroId] ? heroId : "luck");
+    const id = characters[name];
+ const idKey = `hero-${id}`
 
     useEffect(() => {
-        const storedHero = localStorage.getItem("hero");
+        const storedHero = localStorage.getItem(idKey);
         if (storedHero) {
             const heroData = JSON.parse(storedHero);
             if ((Date.now() - heroData.timestamp) < period_month) {
@@ -41,15 +59,13 @@ const AboutMe = () => {
                     eye_color: data.eye_color,
                 };
                 setHero(info);
-                localStorage.setItem(
-                    "hero",
-                    JSON.stringify({
+                localStorage.setItem(idKey, JSON.stringify({
                         payload: info,
                         timestamp: Date.now(),
                     })
                 );
             });
-    }, []);
+    }, [id]);
 
 
     return (
@@ -58,7 +74,8 @@ const AboutMe = () => {
                 <div className="text-[2em] text-justify tracking-widest leading-14 ml-8">
                     {Object.keys(hero).map(key => (
                         <p key={key}>
-                            <span className="text-3xl capitalize">{key.replace('_', ' ')}</span>: {hero[key as keyof HeroInfo]}
+                            <span
+                                className="text-3xl capitalize">{key.replace('_', ' ')}</span>: {hero[key as keyof HeroInfo]}
                         </p>
                     ))}
                 </div>
