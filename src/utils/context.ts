@@ -1,8 +1,8 @@
 import {createContext} from "react";
-import type {StarContextValue} from "./types";
-import {navItems} from "./constant.ts";
+import type {SWContextValue} from "./types";
+import {defaultHero} from "./constant.ts";
 
-export const StarContext = createContext<StarContextValue>({
-    page:navItems[0],
-    changePage:(page:string)=>console.log(page)
-})
+export const SWContext = createContext<SWContextValue>({
+    hero: defaultHero,
+    changeHero: (hero: string) => console.log(hero)
+});

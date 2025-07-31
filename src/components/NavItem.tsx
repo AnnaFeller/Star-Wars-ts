@@ -1,15 +1,17 @@
 
 import {NavLink} from "react-router";
 import Button from "./ui/Button.tsx";
+import {useContext} from "react";
+import {SWContext} from "../utils/context.ts";
 interface NavProps {
     itemTitle: string;
 
 }
 
 const NavItem = ({ itemTitle }: NavProps) => {
-
+const {hero} = useContext(SWContext);
     return (
-        <NavLink to={`/${itemTitle}`}><Button>{itemTitle}</Button> </NavLink>
+        <NavLink to={`/${itemTitle}/${hero}`}><Button>{itemTitle}</Button> </NavLink>
     );
     //он меняет адресную строку но не перезапускает аплекацю , но мкеняет тот кто привязан к нему
 }

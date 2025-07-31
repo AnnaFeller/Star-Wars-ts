@@ -1,92 +1,58 @@
 import {useEffect, useState} from "react";
+import {base_url, period_month} from "../utils/constant.ts";
 
 const Contact = () => {
+    const [planets, setPlanets] = useState(['wait...']);
 
-    const [planets, setPlanets] = useState<string[] | null>(null);
-
-
-    useEffect(() => {
-        const localData = localStorage.getItem("planets");
-        const time = Date.now()
-        const days = 30 * 24 * 60 * 60 * 1000
-
-        if (localData) {
-            const storeDate = JSON.parse(localData);
-            if (time - storeDate.timestamp < days) {
-                setPlanets(storeDate.payload);
-                return;
-            }
-        }
-
-        async function getPlanets() {
-                const res = await fetch(`https://sw-info-api.herokuapp.com/v1/planets`)
-                const data:Array<{name:string}> = await res.json()
-                const planets = data.map(item => item.name);
-            setPlanets(planets);
-                localStorage.setItem('planets', JSON.stringify({
-                        payload: planets,
-                    timestamp: Date.now()
-                }))
-        }
-
-        getPlanets()
-
-    }, []);
-
-
-    if (!planets) {
-        return <div>
-            <span className="spinner-border spinner-border-sm"></span>
-            Loading..
-        </div>;
+    async function getPlanets() {
+        const res = await fetch(`${base_url}/v1/planets`);
+        const data: Array<{name: string}> = await res.json();
+        const planets = data.map(item => item.name);
+        setPlanets(planets);
+        localStorage.setItem('planets', JSON.stringify({
+            payload: planets,
+            time: Date.now()
+        }));
     }
 
+    useEffect(() => {
+        const planets = JSON.parse(localStorage.getItem('planets')!);
+        if (planets && ((Date.now() - planets.time) < period_month)) {
+            setPlanets(planets.payload);
+        } else {
+            getPlanets().then(() => console.log('Planets were loaded'));
+        }
+    }, [])
 
     return (
-        <div className='max-w-xl mx-auto p-4 bg-white rounded-lg'>
-            <form onSubmit={e => {
-                e.preventDefault();
-            }}>
-                <div>
-                    <label htmlFor="fname" className="block text-sm font-medium text-gry-color">First Name</label>
-                    <input type="text" id="fname" name="firstname" placeholder="Your name.." className="mt-1 block w-full rounded-md border border-black p-1 text-yellow-600"/>
-                </div>
-
-                <div>
-                    <label htmlFor="lname" className="block text-sm font-medium text-gry-color">Last Name</label>
-                    <input type="text" id="lname" name="lastname" placeholder="Your last name.." className="mt-1 block w-full rounded-md border border-black p-1 text-yellow-600"/>
-                </div>
-
-
-
-                <div>
-                    <label htmlFor="country" className="block text-sm font-medium text-gry-color border-black">Planet</label>
-                    <select id="country" name="country"  className="mt-1 block w-full rounded-md border border-black p-2 text-yellow-600">
-                        {planets.map((planet, index) => (
-                            <option key={index} value={planet}>
-                                {planet}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gry-color">Subject</label>
-                    <textarea id="subject" name="subject" placeholder="Write something.." className="mt-1 block w-full rounded-md border border-black p-2 h-32 resize-none text-yellow-600"></textarea>
-
-                </div>
-
-
-
-
-                <div className='text-center '>
-                    <input type="submit" value="Submit"  className="bg-green-color hover:bg-gren-color text-white px-4 py-2 p-2x rounded cursor-pointer" />
-                </div>
-
-
-            </form>
-        </div>
-    );
+        <form className={`w-4/5 my-0 mx-auto rounded-[5px] bg-[#f2f2f2] p-5`} onSubmit={(e) => {
+            e.preventDefault();
+        }}>
+            <label className={`w-full text-red-color`}>First Name
+                <input className={`text-black border w-full p-3 border-[#ccc] rounded-[4px] mt-1.5 mb-4 resize-y`} type="text"
+                       name="firstname" placeholder="Your first name..."/>
+            </label>
+            <label className={`w-full text-red-color`}>Last Name
+                <input className={`text-black border w-full p-3 border-[#ccc] rounded-[4px] mt-1.5 mb-4 resize-y`} type="text"
+                       name="lastname" placeholder="Your last name..."/>
+            </label>
+            <label className={`w-full text-red-color`}>Planet
+                <select className={`border w-full text-black p-3 border-[#ccc] rounded-[4px] mt-1.5 mb-4 resize-y`}
+                        name="planet">{
+                    planets.map(item => <option value={item} key={item}>{item}</option>)
+                }
+                </select>
+            </label>
+            <label className={`w-full text-red-color`}>Subject
+                <textarea className={`text-black border h-52 w-full p-3 border-[#ccc] rounded-[4px] mt-1.5 mb-4 resize-y`}
+                          name="subject" placeholder="Write something..."/>
+            </label>
+            <button
+                className={`bg-[#4CAF50] text-white py-3 px-5 border-none rounded-[4px] cursor-pointer hover:bg-[#45a049]`}
+                type="submit">Submit
+            </button>
+        </form>
+    )
 };
 
 export default Contact;

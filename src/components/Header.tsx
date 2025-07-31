@@ -1,13 +1,14 @@
 import Navigation from "./Navigation.tsx";
-
-
+import {useContext} from "react";
+import {SWContext} from "../utils/context.ts";
+import {characters} from "../utils/constant.ts";
 
 const Header = () => {
+    const {hero} = useContext(SWContext)
     return (
         <header className="rounded-t-3xl bg-grey-color">
-           <Navigation  />
-            {/*// передаем пропс по линии с хедер*/}
-            <h1 className="text-center text-3xl py-6">Luke Skywalker</h1>
+            <Navigation/>
+            <h1 className="text-center text-3xl py-6">{characters[hero].name}</h1>
         </header>
     );
 };

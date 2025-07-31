@@ -3,19 +3,19 @@ import Header from "./components/Header.tsx";
 import Main from "./components/Main.tsx";
 import Footer from "./components/Footer.tsx";
 import {useState} from "react";
-import {navItems} from "./utils/constant.ts";
-import {StarContext} from "./utils/context.ts";
+import {SWContext} from "./utils/context.ts";
+import {defaultHero} from "./utils/constant.ts";
 
 function App() {
-    const [page, setPage] = useState(navItems[0]);
+    const [hero, setHero] = useState(defaultHero);
 
     return (
         <div>
-            <StarContext value={{ page,  changePage: setPage }}>
+            <SWContext value={{hero, changeHero: setHero}}>
                 <Header/>
                 <Main/>
                 <Footer/>
-            </StarContext>
+            </SWContext>
         </div>
 
     )
