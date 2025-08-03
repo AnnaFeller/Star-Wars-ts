@@ -3,18 +3,22 @@ import {NavLink} from "react-router";
 import Button from "./ui/Button.tsx";
 import {useContext} from "react";
 import {SWContext} from "../utils/context.ts";
+import {defaultHero} from "../utils/constant.ts";
 interface NavProps {
     itemTitle: string;
 
 }
 
 const NavItem = ({ itemTitle }: NavProps) => {
-const {hero} = useContext(SWContext);
+const {hero = defaultHero} = useContext(SWContext);
     return (
         <NavLink to={`/${itemTitle}/${hero}`}><Button>{itemTitle}</Button> </NavLink>
     );
-    //он меняет адресную строку но не перезапускает аплекацю , но мкеняет тот кто привязан к нему
 }
+
+
+    //он меняет адресную строку но не перезапускает аплекацю , но мкеняет тот кто привязан к нему
+
 // добавляем промт если есть больше одного придмета , одинаковые только разные название
 // };<li
 //     onClick={() => changePage(itemTitle)}

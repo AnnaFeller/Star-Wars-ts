@@ -10,9 +10,11 @@ export const useErrorPage = () => {
 
     useEffect(() => {
         if (!(heroId in characters)) {
-            return //если heroId не правельный , будет страница error
+            changeHero() //если heroId не правельный , будет страница error
+        }else {
+            changeHero(heroId);
         }
-        changeHero(heroId);
+
     },[heroId])
 
         return{
